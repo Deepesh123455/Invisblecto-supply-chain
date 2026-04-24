@@ -375,9 +375,9 @@ const InventoryAllocation = () => {
 
                       <div className="p-5">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 font-body border-b border-border/30 pb-2">Allocations by Store Matrix</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 overflow-y-auto pr-2 pb-2 custom-scrollbar">
+                        <div className="flex overflow-x-auto md:grid md:grid-cols-4 gap-3 pb-4 md:pb-2 custom-scrollbar">
                           {(showAll ? visibleDistribution : visibleDistribution.slice(0, 8)).map((d, i) => (
-                            <div key={i} className="p-3 border border-border/40 rounded-xl bg-card hover:bg-muted/5 transition-colors">
+                            <div key={i} className="p-3 border border-border/40 rounded-xl bg-card hover:bg-muted/5 transition-colors min-w-[160px] md:min-w-0 flex-shrink-0">
                               <div className="flex justify-between items-start mb-2">
                                 <div>
                                   <span className="font-bold text-xs truncate">{d.store.city}</span>
