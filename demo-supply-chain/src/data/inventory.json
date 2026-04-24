@@ -1,0 +1,81 @@
+{
+  "locations": [
+    {
+      "product": "Black T-Shirt",
+      "sku": "SKU-204",
+      "Delhi": 40,
+      "Gurgaon": 300,
+      "Mumbai": 20,
+      "Bangalore": 120
+    },
+    {
+      "product": "Blue Denim Shirt",
+      "sku": "SKU-101",
+      "Delhi": 30,
+      "Gurgaon": 150,
+      "Mumbai": 60,
+      "Bangalore": 40
+    },
+    {
+      "product": "Printed Kurti",
+      "sku": "SKU-507",
+      "Delhi": 180,
+      "Gurgaon": 40,
+      "Mumbai": 25,
+      "Bangalore": 60
+    },
+    {
+      "product": "Slim Fit Chinos",
+      "sku": "SKU-305",
+      "Delhi": 20,
+      "Gurgaon": 80,
+      "Mumbai": 45,
+      "Bangalore": 110
+    },
+    {
+      "product": "Cotton Polo",
+      "sku": "SKU-610",
+      "Delhi": 55,
+      "Gurgaon": 90,
+      "Mumbai": 70,
+      "Bangalore": 35
+    },
+    {
+      "product": "Linen Shirt",
+      "sku": "SKU-718",
+      "Delhi": 25,
+      "Gurgaon": 60,
+      "Mumbai": 40,
+      "Bangalore": 30
+    }
+  ],
+  "purchasePlanning": [
+    {
+      "sku": "SKU-101",
+      "product": "Blue Denim Shirt",
+      "currentInventory": 50,
+      "forecastDemand": 240,
+      "supplierLeadTime": "7 days",
+      "suggestedOrderQty": 200,
+      "recommendedOrderDate": "April 5"
+    },
+    {
+      "sku": "SKU-204",
+      "product": "Black T-Shirt",
+      "currentInventory": 140,
+      "forecastDemand": 320,
+      "supplierLeadTime": "10 days",
+      "suggestedOrderQty": 250,
+      "recommendedOrderDate": "April 3"
+    },
+    {
+      "sku": "SKU-305",
+      "product": "Slim Fit Chinos",
+      "currentInventory": 30,
+      "forecastDemand": 180,
+      "supplierLeadTime": "5 days",
+      "suggestedOrderQty": 150,
+      "recommendedOrderDate": "April 6"
+    }
+  ]
+}

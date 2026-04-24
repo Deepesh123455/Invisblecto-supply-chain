@@ -1,0 +1,118 @@
+{
+  "recommendations": [
+    {
+      "id": 1,
+      "priority": "Critical",
+      "message": "Blue Denim Shirt - M is projected to stock out in Delhi within 3 days. A reorder of 200 units has been prepared.",
+      "category": "Reorder",
+      "status": "awaiting_approval",
+      "action": "Approve Reorder"
+    },
+    {
+      "id": 2,
+      "priority": "High",
+      "message": "120 units of Black T-Shirt sitting idle in Gurgaon. Mumbai store needs them — transfer ready to execute.",
+      "category": "Transfer",
+      "status": "awaiting_approval",
+      "action": "Approve Transfer"
+    },
+    {
+      "id": 3,
+      "priority": "Medium",
+      "message": "Printed Kurti demand dropped 30% over 3 months. Recommending reduced allocation to 2 locations only.",
+      "category": "Forecast",
+      "status": "awaiting_review",
+      "action": "Review Plan"
+    },
+    {
+      "id": 4,
+      "priority": "High",
+      "message": "Slim Fit Chinos imbalanced — Bangalore has 110 units while Delhi has only 20. Transfer of 45 units staged.",
+      "category": "Transfer",
+      "status": "awaiting_approval",
+      "action": "Approve Transfer"
+    },
+    {
+      "id": 5,
+      "priority": "Critical",
+      "message": "Cotton Polo demand surging 22% across all regions. Current stock won't last 10 days at this rate.",
+      "category": "Forecast",
+      "status": "flagged",
+      "action": "Review Forecast"
+    },
+    {
+      "id": 6,
+      "priority": "Medium",
+      "message": "Linen Shirt spread thin across 4 locations. Consolidation to Mumbai + Delhi would reduce holding cost by 18%.",
+      "category": "Transfer",
+      "status": "awaiting_review",
+      "action": "Review Plan"
+    }
+  ],
+  "stockouts": [
+    {
+      "sku": "SKU-101",
+      "product": "Blue Denim Shirt",
+      "location": "Delhi Warehouse",
+      "daysRemaining": 3,
+      "suggestedAction": "Reorder 200 units",
+      "status": "awaiting_approval"
+    },
+    {
+      "sku": "SKU-204",
+      "product": "Black T-Shirt",
+      "location": "Mumbai Store",
+      "daysRemaining": 5,
+      "suggestedAction": "Transfer 120 units",
+      "status": "awaiting_approval"
+    },
+    {
+      "sku": "SKU-305",
+      "product": "Slim Fit Chinos",
+      "location": "Bangalore Store",
+      "daysRemaining": 4,
+      "suggestedAction": "Reorder 150 units",
+      "status": "ready"
+    },
+    {
+      "sku": "SKU-507",
+      "product": "Printed Kurti",
+      "location": "Gurgaon Warehouse",
+      "daysRemaining": 7,
+      "suggestedAction": "Reduce allocation",
+      "status": "reviewing"
+    }
+  ],
+  "activityFeed": [
+    {
+      "type": "analysis",
+      "message": "Detected 22% demand spike for Cotton Polo — reviewing supplier capacity",
+      "time": "Just now",
+      "status": "processing"
+    },
+    {
+      "type": "action",
+      "message": "Transfer of 120 Black T-Shirts (Gurgaon → Mumbai) prepared and awaiting your approval",
+      "time": "2 min ago",
+      "status": "awaiting"
+    },
+    {
+      "type": "completed",
+      "message": "Seasonal forecast model updated with latest 30-day sales data",
+      "time": "5 min ago",
+      "status": "done"
+    },
+    {
+      "type": "alert",
+      "message": "Blue Denim Shirt stock critically low in Delhi — reorder recommendation generated",
+      "time": "8 min ago",
+      "status": "flagged"
+    },
+    {
+      "type": "analysis",
+      "message": "Identified inventory imbalance for Slim Fit Chinos across 3 locations",
+      "time": "12 min ago",
+      "status": "done"
+    }
+  ]
+}

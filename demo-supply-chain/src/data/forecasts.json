@@ -1,0 +1,30 @@
+{
+  "SKU-101": {
+    "product": "Blue Denim Shirt",
+    "historical": [120, 130, 140, 150, 170, 160, 180, 190, 210, 230, 240, 260],
+    "forecast": [280, 300, 320],
+    "months": ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr*", "May*", "Jun*"],
+    "aiSummary": "Demand for Blue Denim Shirt is rising due to seasonal sales trends. Recommend increasing purchase volume by 20% for next quarter."
+  },
+  "SKU-204": {
+    "product": "Black T-Shirt",
+    "historical": [200, 210, 190, 220, 240, 230, 250, 260, 280, 300, 310, 320],
+    "forecast": [340, 360, 380],
+    "months": ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr*", "May*", "Jun*"],
+    "aiSummary": "Black T-Shirt maintains strong consistent demand across all locations. Stable supply chain — maintain current order cadence."
+  },
+  "SKU-305": {
+    "product": "Slim Fit Chinos",
+    "historical": [80, 85, 90, 95, 100, 110, 120, 130, 140, 150, 160, 180],
+    "forecast": [195, 210, 225],
+    "months": ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr*", "May*", "Jun*"],
+    "aiSummary": "Slim Fit Chinos showing accelerating growth. Recommend expanding to 2 additional stores and increasing buffer stock by 15%."
+  },
+  "SKU-507": {
+    "product": "Printed Kurti",
+    "historical": [90, 85, 80, 78, 72, 70, 68, 65, 62, 58, 55, 52],
+    "forecast": [48, 45, 42],
+    "months": ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr*", "May*", "Jun*"],
+    "aiSummary": "Printed Kurti demand declining steadily. Consider reducing stock allocation and consolidating to high-performing locations only."
+  }
+}
