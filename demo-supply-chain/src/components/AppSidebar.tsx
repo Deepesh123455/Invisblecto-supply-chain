@@ -1,6 +1,5 @@
 import {
-  LayoutDashboard, TrendingUp, Warehouse,
-  Settings, Sparkles, Activity, Network, ArrowRightLeft
+  LayoutDashboard, TrendingUp, Warehouse, Sparkles, Activity, Network, ArrowRightLeft
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -21,9 +20,8 @@ const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Demand Intelligence", url: "/demand-forecast", icon: TrendingUp },
   { title: "Supply Operations", url: "/inventory-allocation", icon: Warehouse },
-  { title: "Inter-store Transfers", url: "/inter-store-transfers", icon: ArrowRightLeft },
   { title: "Store Network", url: "/store-network", icon: Network },
-  { title: "Exceptions Room", url: "/exceptions", icon: Sparkles },
+
 ];
 
 export function AppSidebar() {
@@ -32,15 +30,15 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="h-14 flex items-center px-4 border-b border-sidebar-border shrink-0 overflow-hidden">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg ai-gradient shrink-0">
-            <span className="text-sm font-bold text-sidebar-primary-foreground font-display">Y</span>
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-sm shadow-primary/20 shrink-0">
+            <span className="text-sm font-bold text-white font-display">D</span>
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-sidebar-accent-foreground tracking-wide font-display">Your Company</span>
-              <span className="text-[10px] text-sidebar-foreground font-body uppercase tracking-widest">Inventory AI</span>
+              <span className="text-md font-bold text-foreground tracking-tight font-display leading-tight ">DemandIQ</span>
+              <span className="text-[10px] text-muted-foreground font-body font-medium leading-none">Powered by InvisibleCTO</span>
             </div>
           )}
         </div>
@@ -49,7 +47,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-sidebar-foreground/50 text-[10px] uppercase tracking-widest font-body">
-            {!collapsed && "Navigation"}
+
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -83,7 +81,7 @@ export function AppSidebar() {
                   <div className="h-2 w-2 rounded-full bg-success animate-pulse-soft shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-[11px] text-sidebar-accent-foreground font-body">65 Stores · 10 SKUs</p>
-                    <p className="text-[10px] text-sidebar-foreground font-body">6 Countries · 8 Regions</p>
+                    <p className="text-[10px] text-sidebar-foreground font-body">Pan-India · 4 Major Zones</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 rounded-lg p-2.5 bg-sidebar-accent/50">

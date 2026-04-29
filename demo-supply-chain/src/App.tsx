@@ -4,10 +4,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "@/pages/Login";
+import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import DemandForecast from "@/pages/DemandForecast";
 import InventoryAllocation from "@/pages/InventoryAllocation";
-import ExceptionsDashboard from "@/pages/ExceptionsDashboard";
+// import ExceptionsDashboard from "@/pages/ExceptionsDashboard";
 import StoreNetwork from "@/pages/StoreNetwork";
 import InterStoreTransfers from "./pages/InterStoreTransfers";
 import SettingsPage from "@/pages/Settings";
@@ -22,11 +23,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/demand-forecast" element={<DemandForecast />} />
           <Route path="/inventory-allocation" element={<InventoryAllocation />} />
-          <Route path="/exceptions" element={<ExceptionsDashboard />} />
+          {/* <Route path="/exceptions" element={<ExceptionsDashboard />} /> */}
           <Route path="/store-network" element={<StoreNetwork />} />
           <Route path="/inter-store-transfers" element={<InterStoreTransfers />} />
           <Route path="/settings" element={<SettingsPage />} />

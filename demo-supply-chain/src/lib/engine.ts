@@ -1,20 +1,19 @@
 /**
  * Enterprise Demand Forecasting & Supply Chain Management Engine
- * Handles 65+ stores across India and international regions.
+ * Handles 65+ stores across India.
  * All forecasts are RANGES — never a single number.
  */
 
 export type StoreSegment =
   | "Tier 1 Metro"
   | "Tier 2 Emerging"
-  | "International Premium"
   | "South-East Corridor"
   | "Heritage Bazaar"
   | "New Store Pilot"
   | "Outlet Channel"
   | "Online Hybrid";
 
-export type Region = "North India" | "South India" | "East India" | "West India" | "International";
+export type Region = "North India" | "South India" | "East India" | "West India" | "All India";
 
 export interface Store {
   id: string;
@@ -24,7 +23,6 @@ export interface Store {
   country: string;
   segment: StoreSegment;
   historicPerformance: number; // 0-1 score
-  isInternational: boolean;
 }
 
 export interface SKU {
@@ -89,7 +87,8 @@ export interface ManualInput {
   type: "Event" | "Weather" | "Competitor" | "Trend";
   name: string;
   impact: number; // multiplier e.g. 1.3 = +30%
-  weekKey: string;
+  weekKey: string; // Start week
+  endWeekKey?: string; // End week
   region?: Region;
   addedByUser: boolean;
 }
@@ -160,15 +159,6 @@ const INDIAN_CITIES: { city: string; region: Region; segment: StoreSegment }[] =
   { city: "Raipur", region: "East India", segment: "New Store Pilot" },
   { city: "Ranchi", region: "East India", segment: "New Store Pilot" },
   { city: "Guwahati", region: "East India", segment: "South-East Corridor" },
-  // International
-  { city: "Dubai", region: "International", segment: "Tier 1 Metro" },
-  { city: "Abu Dhabi", region: "International", segment: "Tier 2 Emerging" },
-  { city: "Singapore", region: "International", segment: "Tier 1 Metro" },
-  { city: "London", region: "International", segment: "Tier 1 Metro" },
-  { city: "New York", region: "International", segment: "Tier 1 Metro" },
-  { city: "Kuala Lumpur", region: "International", segment: "South-East Corridor" },
-  { city: "Bangkok", region: "International", segment: "South-East Corridor" },
-  { city: "Colombo", region: "International", segment: "New Store Pilot" },
 ];
 
 const SKU_CATALOG: Omit<SKU, 'id'>[] = [
@@ -214,17 +204,17 @@ export class DataSimulator {
   private generateTransfers() {
     this.demoTransfers = [];
     // Ensure 2-3 transfers for each region for demo purposes
-    const regions: Region[] = ["North India", "South India", "West India", "East India", "International"];
+    const regions: Region[] = ["North India", "South India", "West India", "East India"];
     regions.forEach(region => {
       const regionStores = this.stores.filter(s => s.region === region);
       if (regionStores.length < 2) return;
-      
+
       for (let i = 0; i < 2; i++) {
         const fromStore = regionStores[i];
         const toStore = regionStores[regionStores.length - 1 - i];
         const sku = this.skus[i % this.skus.length];
         const units: [number, number] = [45 + i * 5, 65 + i * 5];
-        
+
         this.demoTransfers.push({
           id: `TR-DEMO-${region.replace(/\s+/g, '-')}-${i}`,
           skuName: sku.name,
@@ -256,24 +246,16 @@ export class DataSimulator {
       const storeNum = 1000 + i;
       this.stores.push({
         id: `ST-${storeNum}`,
-        name: `YourCompany ${cityData.city} ${storeNum}`,
+        name: `YC ${cityData.city} ${storeNum}`,
         city: cityData.city,
         region: cityData.region,
-        country: cityData.region === "International" ? this.getCityCountry(cityData.city) : "India",
+        country: "India",
         segment: cityData.segment,
         historicPerformance: 0.55 + Math.random() * 0.45,
-        isInternational: cityData.region === "International",
       });
     }
   }
 
-  private getCityCountry(city: string): string {
-    const map: Record<string, string> = {
-      Dubai: "UAE", "Abu Dhabi": "UAE", Singapore: "Singapore", London: "UK",
-      "New York": "USA", "Kuala Lumpur": "Malaysia", Bangkok: "Thailand", Colombo: "Sri Lanka",
-    };
-    return map[city] || "India";
-  }
 
   private generateSKUs() {
     SKU_CATALOG.forEach((s, i) => {
@@ -297,7 +279,7 @@ export class DataSimulator {
       return `W${String(weekNum).padStart(2, "0")}-${year}`;
     });
 
-    this.stores.slice(0, 10).forEach(store => {
+    this.stores.forEach(store => {
       this.skus.slice(0, 5).forEach(sku => {
         let closing = 120 + Math.floor(Math.random() * 120);
         weekKeys.forEach((weekKey, idx) => {
@@ -313,11 +295,11 @@ export class DataSimulator {
 
           baseDemand = Math.max(5, baseDemand);
           const opening = closing;
-          const purchased = idx % 8 === 0 ? Math.floor(80 + Math.random() * 80) : (isStockOutWeek ? 150 : 0);
+          const purchased = idx % 8 === 0 ? Math.floor(80 + Math.random() * 80) : (isStockOutWeek ? 50 : 0);
 
           let sold = Math.floor(Math.abs(baseDemand) * perf);
           if (isStockOutWeek) sold = opening + purchased;
-          if (isPromoWeek) sold = Math.floor(sold * 2.2);
+          if (isPromoWeek) sold = Math.floor(sold * 1.25);
           sold = Math.min(opening + purchased, Math.max(0, sold));
           closing = Math.max(0, (opening + purchased) - sold);
 
@@ -345,10 +327,14 @@ export class DataSimulator {
 
   private generateManualInputs() {
     this.manualInputs = [
-      { id: "MI-001", type: "Event", name: "Summer Peak", impact: 1.45, weekKey: "W18-2026", region: "North India", addedByUser: true },
-      { id: "MI-002", type: "Weather", name: "Heatwave Alert", impact: 0.85, weekKey: "W16-2026", region: "South India", addedByUser: true },
-      { id: "MI-003", type: "Competitor", name: "Zara 20% Sale", impact: 0.78, weekKey: "W19-2026", addedByUser: false },
-      { id: "MI-004", type: "Trend", name: "Viral TikTok Fashion", impact: 1.38, weekKey: "W15-2026", addedByUser: false },
+      { id: "MI-001", type: "Event", name: "Peak Wedding Season", impact: 1.45, weekKey: "W18-2026", endWeekKey: "W20-2026", region: "North India", addedByUser: true },
+      { id: "MI-002", type: "Weather", name: "Monsoon Supply Lag", impact: 0.82, weekKey: "W16-2026", endWeekKey: "W17-2026", region: "West India", addedByUser: true },
+      { id: "MI-003", type: "Competitor", name: "Brand Discount War", impact: 0.78, weekKey: "W19-2026", addedByUser: false },
+      { id: "MI-004", type: "Trend", name: "Ethnic Wear Demand", impact: 1.28, weekKey: "W15-2026", endWeekKey: "W16-2026", addedByUser: false },
+      { id: "MI-005", type: "Event", name: "Mid-Season Clearance", impact: 1.55, weekKey: "W20-2026", endWeekKey: "W21-2026", addedByUser: true },
+      { id: "MI-006", type: "Event", name: "Festive Pre-Booking", impact: 1.22, weekKey: "W22-2026", region: "South India", addedByUser: false },
+      { id: "MI-007", type: "Event", name: "Ramadan Collection Launch", impact: 1.35, weekKey: "W14-2026", endWeekKey: "W15-2026", region: "West India", addedByUser: false },
+      { id: "MI-008", type: "Event", name: "National Holiday Peak", impact: 1.18, weekKey: "W17-2026", region: "All India", addedByUser: true },
     ];
   }
 }
@@ -424,15 +410,19 @@ export class ForecastingEngine {
       // Manual input amplification
       const manualBoost = manualInputs.reduce((acc, mi) => {
         const [miW, miY] = mi.weekKey.replace("W", "").split("-").map(Number);
-        const currentYear = 2026;
-        const currentWeek = 14;
+        const [miEndW, miEndY] = (mi.endWeekKey || mi.weekKey).replace("W", "").split("-").map(Number);
 
         // Year-aware week matching
-        const isMatch = miY === 2026
-          ? Math.abs(miW - safeWeekNum) < 3
-          : (miY === 2025 && safeWeekNum < 3 && miW > 50);
+        const currentYear = 2026;
 
-        return isMatch ? acc * mi.impact : acc;
+        // Check if current safeWeekNum falls within [miW, miEndW]
+        // Simplified for 2026 demo
+        const isMatch = safeWeekNum >= miW && safeWeekNum <= miEndW;
+
+        // Apply a very strong visual weight for the demo so the delta is obvious
+        const appliedImpact = mi.impact > 1 ? 1 + (mi.impact - 1) * 2.5 : mi.impact;
+
+        return isMatch ? acc * appliedImpact : acc;
       }, 1);
 
       const basePredicted = Math.max(5, avgSales * seasonality);

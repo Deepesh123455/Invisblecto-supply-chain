@@ -30,13 +30,13 @@ const StoreNetwork = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("All");
   const [selectedSegment, setSelectedSegment] = useState<string>("All");
   const [showMore, setShowMore] = useState(false);
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
+    setCurrentPage(1);
     setShowMore(false);
   }, [selectedRegion, selectedSegment, search]);
-
-  const regions = ["All", ...Object.keys(REGION_COUNTS)];
-  const segments = ["All", ...Object.keys(SEGMENT_COUNTS)];
 
   const filtered = useMemo(() => {
     return simulator.stores.filter(s => {
@@ -50,23 +50,28 @@ const StoreNetwork = () => {
     });
   }, [search, selectedRegion, selectedSegment]);
 
-  const pagedData = showMore ? filtered : filtered.slice(0, 5);
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  
+  // If showMore is false, only show 5. If true, show the current page.
+  const pagedData = showMore 
+    ? filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+    : filtered.slice(0, 5);
 
   return (
     <AppLayout>
-      <div className="space-y-6 max-w-7xl mx-auto pb-12 px-4 md:px-6">
+      <div className="space-y-5 max-w-7xl mx-auto pb-10 px-4 md:px-6">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
             <h1 className="text-3xl font-display font-bold text-foreground tracking-tight">Store Network</h1>
-            <p className="text-sm text-muted-foreground mt-1 font-body">
-              {simulator.stores.length} stores across {Object.keys(REGION_COUNTS).length} regions · {Object.values(simulator.stores.reduce<Record<string, boolean>>((a, s) => ({ ...a, [s.country]: true }), {})).length} countries
+            <p className="text-sm text-muted-foreground mt-0.5 font-body">
+              {simulator.stores.length} stores across {Object.keys(REGION_COUNTS).length} strategic regions
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Globe className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs font-semibold text-muted-foreground font-body">India + UAE · Singapore · UK · USA · Malaysia · Thailand · Sri Lanka</span>
+            <span className="text-[11px] font-bold text-muted-foreground font-body uppercase tracking-wider">Pan-India Coverage</span>
           </div>
         </div>
 
@@ -78,7 +83,7 @@ const StoreNetwork = () => {
               onClick={() => setSelectedRegion(selectedRegion === region ? "All" : region)}
               className={`rounded-xl p-4 border text-left transition-all hover:shadow-md ${selectedRegion === region
                 ? "bg-primary text-primary-foreground border-primary"
-                : "bg-card border-border/40 card-shadow hover:border-primary/40"
+                : "bg-card border-border/40 shadow-sm hover:border-primary/40"
                 }`}
             >
               <p className="text-xl font-bold font-display">{count}</p>
@@ -87,24 +92,25 @@ const StoreNetwork = () => {
           ))}
         </div>
 
-        {/* Segment breakdown */}
-        <div className="rounded-2xl bg-card border border-border/40 p-5 card-shadow">
-          <h3 className="text-sm font-semibold text-foreground mb-4">Store Segments (Monthly Grouping for Forecast Models)</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {Object.entries(SEGMENT_COUNTS).map(([seg, count]) => (
-              <button
-                key={seg}
-                onClick={() => setSelectedSegment(selectedSegment === seg ? "All" : seg)}
-                className={`rounded-xl p-3 border text-left transition-all ${selectedSegment === seg
-                  ? "bg-primary/10 border-primary/40"
-                  : "border-border/30 hover:border-primary/30 hover:bg-accent/30"
-                  }`}
-              >
-                <p className="text-base font-bold font-display text-foreground">{count}</p>
-                <p className="text-[10px] font-semibold text-muted-foreground mt-0.5 font-body leading-tight">{seg}</p>
-              </button>
-            ))}
-          </div>
+        {/* Segment breakdown — compact pill strip */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest shrink-0">Segments:</span>
+          {Object.entries(SEGMENT_COUNTS).map(([seg, count]) => (
+            <button
+              key={seg}
+              onClick={() => setSelectedSegment(selectedSegment === seg ? "All" : seg)}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bold font-body transition-all ${
+                selectedSegment === seg
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card border-border/40 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+              }`}
+            >
+              {seg}
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${selectedSegment === seg ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                {count}
+              </span>
+            </button>
+          ))}
         </div>
 
         {/* Search + Filter */}
@@ -128,48 +134,33 @@ const StoreNetwork = () => {
               Segment: {selectedSegment} ×
             </Button>
           )}
-          {
-            selectedRegion !== "All" || selectedSegment !== "All" || search ? (
-              <span className="text-xs text-muted-foreground font-body ml-auto">{filtered.length} stores shown</span>
-            ) : null
-          }
+          <span className="text-xs text-muted-foreground font-body ml-auto">
+            {filtered.length} stores found
+          </span>
         </div>
 
         {/* Store Table */}
-        {selectedRegion === "All" && selectedSegment === "All" && !search ? (
-          <div className="rounded-2xl border border-dashed border-border/60 bg-card/50 p-12 text-center card-shadow">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-muted/50 mb-4">
-              <Filter className="h-8 w-8 text-muted-foreground/50" />
-            </div>
-            <h3 className="text-xl font-display font-semibold text-foreground mb-2">Select a category to view stores</h3>
-            <p className="text-sm text-muted-foreground font-body max-w-md mx-auto">
-              Choose from the options above or search from search box.
-            </p>
-          </div>
-        ) : (
-          <div className="rounded-2xl bg-card border border-border/40 overflow-hidden card-shadow">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted/20 border-b border-border/40">
-                    <th className="text-left p-3 pl-5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Store ID</th>
-                    <th className="text-left p-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">City</th>
-                    <th className="text-left p-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Region</th>
-                    <th className="text-left p-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Country</th>
-                    <th className="text-left p-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Segment</th>
-                    <th className="text-right p-3 pr-5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Performance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pagedData.map((store, i) => (
+        <div className="rounded-2xl bg-card border border-border/40 overflow-hidden card-shadow">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-muted/20 border-b border-border/40">
+                  <th className="text-left p-3 pl-5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Store ID</th>
+                  <th className="text-left p-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">City</th>
+                  <th className="text-left p-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Region</th>
+                  <th className="text-left p-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Country</th>
+                  <th className="text-left p-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Segment</th>
+                  <th className="text-right p-3 pr-5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-body">Performance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pagedData.length > 0 ? (
+                  pagedData.map((store, i) => (
                     <tr key={store.id} className={`border-b border-border/20 hover:bg-muted/5 transition-colors ${i % 2 === 0 ? "" : "bg-muted/5"}`}>
                       <td className="p-3 pl-5">
-                        <span className="text-xs font-mono text-muted-foreground">{store.id}</span>
-                      </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-1.5">
-                          <MapPin className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-sm font-medium text-foreground">{store.city}</span>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-foreground truncate">{store.name}</span>
+                          <span className="text-[10px] text-muted-foreground font-mono">{store.id} · {store.city}</span>
                         </div>
                       </td>
                       <td className="p-3">
@@ -194,39 +185,81 @@ const StoreNetwork = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="p-12 text-center text-muted-foreground font-body italic">
+                      No stores found matching these criteria.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
 
-            {!showMore && filtered.length > 5 && (
-              <div className="p-6 border-t border-border/20 bg-muted/5 flex justify-center">
-                <Button 
-                  onClick={() => setShowMore(true)}
-                  className="ai-gradient text-white h-10 px-8 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
-                >
-                  Show {filtered.length - 5} More Stores
-                </Button>
-              </div>
-            )}
-            
-            {showMore && (
-              <div className="p-4 border-t border-border/20 bg-muted/10 flex items-center justify-between">
+          {/* Conditional Footer: Show More vs Pagination */}
+          {!showMore && filtered.length > 5 ? (
+            <div className="p-6 border-t border-border/20 bg-muted/5 flex justify-center">
+              <Button 
+                onClick={() => setShowMore(true)}
+                className="ai-gradient text-white h-10 px-8 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
+              >
+                Show {filtered.length - 5} More Stores
+              </Button>
+            </div>
+          ) : showMore && totalPages > 1 ? (
+            <div className="p-4 border-t border-border/20 bg-muted/5 flex items-center justify-between">
+              <div className="flex items-center gap-4">
                 <div className="text-xs text-muted-foreground font-body">
-                  Showing all {filtered.length} stores
+                  Showing <span className="font-bold text-foreground">{((currentPage - 1) * ITEMS_PER_PAGE) + 1}</span> to <span className="font-bold text-foreground">{Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)}</span> of <span className="font-bold text-foreground">{filtered.length}</span>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowMore(false)}
-                  className="text-[10px] font-bold uppercase tracking-widest px-4 font-body"
+                  className="text-[10px] font-bold uppercase tracking-widest px-2 font-body text-primary h-7"
                 >
                   Show Less
                 </Button>
               </div>
-            )}
-          </div>
-        )}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                  className="h-8 text-[10px] font-bold uppercase tracking-wider"
+                >
+                  Prev
+                </Button>
+                <div className="flex items-center gap-1">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`h-8 w-8 rounded-lg text-[10px] font-bold transition-all ${
+                        currentPage === i + 1 
+                          ? "bg-primary text-primary-foreground" 
+                          : "hover:bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  className="h-8 text-[10px] font-bold uppercase tracking-wider"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
     </AppLayout>
   );

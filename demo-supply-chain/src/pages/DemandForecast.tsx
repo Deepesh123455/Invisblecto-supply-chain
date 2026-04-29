@@ -1,18 +1,39 @@
 import { useState, useMemo } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, ReferenceLine, ComposedChart, Line
 } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Sparkles, TrendingUp, CheckCircle2, Database,
-  Cpu, Zap, Calendar, ChevronDown, ChevronUp,
-  BarChart2, ArrowUpRight, ArrowDownRight, Layers, Activity, ShieldCheck, LayoutDashboard
+  Cpu, Zap, Calendar, ChevronDown, ChevronUp, ArrowUpRight, ArrowDownRight, Layers, Activity, ShieldCheck, LayoutDashboard
 } from "lucide-react";
 import { DataSimulator, ForecastingEngine } from "@/lib/engine";
 
 const simulator = new DataSimulator();
+
+const getWeekRange = (weekKey: string, endWeekKey?: string) => {
+  const [w, y] = weekKey.replace("W", "").split("-").map(Number);
+  const [ew, ey] = (endWeekKey || weekKey).replace("W", "").split("-").map(Number);
+
+  // Simple calculation for 2026 (W01 starts Jan 4, Sunday)
+  const startDate = new Date(y, 0, 4);
+  startDate.setDate(startDate.getDate() + (w - 1) * 7);
+
+  const endDate = new Date(ey || y, 0, 4);
+  endDate.setDate(endDate.getDate() + (ew - 1) * 7 + 6);
+
+  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+
+  // If it's the same week, return single range
+  if (!endWeekKey || weekKey === endWeekKey) {
+    return `${startDate.toLocaleDateString('en-IN', options)} - ${endDate.toLocaleDateString('en-IN', options)}`;
+  }
+
+  // Multi-week range
+  return `${startDate.toLocaleDateString('en-IN', options)} - ${endDate.toLocaleDateString('en-IN', options)}`;
+};
 
 const CustomForecastTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
@@ -76,7 +97,9 @@ const CustomForecastTooltip = ({ active, payload, label }: any) => {
             </div>
             <div className="flex justify-between gap-4 mt-1">
               <span className="text-xs text-muted-foreground">Projected Revenue</span>
-              <span className="text-xs font-bold text-foreground">₹{((d.adjustedMid || 0) * d.price).toLocaleString()}</span>
+              <span className="text-xs font-bold text-foreground">
+                ₹{((d.adjustedLower || 0) * d.price).toLocaleString()} – ₹{((d.adjustedUpper || 0) * d.price).toLocaleString()}
+              </span>
             </div>
           </div>
         </>
@@ -118,7 +141,7 @@ const DemandForecast = () => {
 
   const chartData = useMemo(() => {
     const hist = history.map(h => ({
-      week: h.weekKey,
+      week: getWeekRange(h.weekKey),
       actual: h.sold,
       cleaned: h.sold + h.estimatedLostSales,
       type: "historical",
@@ -130,7 +153,7 @@ const DemandForecast = () => {
       const baseObj = baselineForecasts[i];
 
       return {
-        week: f.weekKey,
+        week: getWeekRange(f.weekKey),
 
         // Baseline (Engine truth)
         baselinePredicted: baseObj.predictedUnits,
@@ -178,39 +201,10 @@ const DemandForecast = () => {
       <div className="space-y-6 max-w-[1600px] mx-auto pb-10 px-4 md:px-6">
 
         {/* --- COMMAND CENTER HEADER --- */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 bg-card/40 border border-border/40 p-6 rounded-3xl shadow-sm backdrop-blur-md">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 text-primary">
-                <Activity className="h-4 w-4" />
-              </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-primary font-body">Scenario Command Center</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground tracking-tight mb-2">Demand Intelligence</h1>
-            <p className="text-sm text-muted-foreground font-body max-w-2xl leading-relaxed">
-              Model multiple demand scenarios in real-time. Overlay marketing events, localized weather, or macro-economic shifts to see immediate impact on supply chain forecasts and projected revenue.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[280px]">
-            <div className={`flex items-center justify-between p-3 rounded-xl border ${reconciliation.ok ? "bg-success/5 border-success/20" : "bg-warning/5 border-warning/20"}`}>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className={`h-4 w-4 ${reconciliation.ok ? 'text-success' : 'text-warning'}`} />
-                <span className="text-xs font-semibold font-body">Data Integrity</span>
-              </div>
-              <span className={`text-xs font-bold ${reconciliation.ok ? 'text-success' : 'text-warning'}`}>
-                {reconciliation.ok ? "100% Reconciled" : `${reconciliation.failedWeeks.length} Gaps Found`}
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-3 rounded-xl border bg-card border-border/50">
-              <div className="flex items-center gap-2">
-                <Cpu className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs font-semibold font-body text-muted-foreground">Active Model</span>
-              </div>
-              <span className="text-[10px] uppercase font-bold text-foreground">
-                {latestBaseline?.modelUsed.replace(' Regression', '')}
-              </span>
-            </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card/40 border border-border/40 p-4 rounded-2xl shadow-sm backdrop-blur-md">
+          <div className="flex flex-col">
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight">Demand Intelligence</h1>
+            <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Scenario Command Center</p>
           </div>
         </div>
 
@@ -264,9 +258,9 @@ const DemandForecast = () => {
               <p className="text-2xl md:text-3xl font-bold text-foreground font-display">{avgAdjustedUnits}</p>
               <p className="text-sm font-medium text-muted-foreground font-display">units/wk</p>
             </div>
-            <div className={`mt-2 inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-md ${avgAdjustedUnits >= avgBaselineUnits ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
-              {avgAdjustedUnits >= avgBaselineUnits ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-              {Math.abs(avgAdjustedUnits - avgBaselineUnits)} units vs baseline
+            <div className={`mt-2 inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-md ${avgAdjustedUnits > avgBaselineUnits ? 'bg-success/10 text-success' : avgAdjustedUnits < avgBaselineUnits ? 'bg-destructive/10 text-destructive' : 'bg-muted/10 text-muted-foreground'}`}>
+              {avgAdjustedUnits > avgBaselineUnits ? <ArrowUpRight className="h-3 w-3" /> : avgAdjustedUnits < avgBaselineUnits ? <ArrowDownRight className="h-3 w-3" /> : <Activity className="h-3 w-3" />}
+              {avgAdjustedUnits > avgBaselineUnits ? '+' : ''}{avgAdjustedUnits - avgBaselineUnits} units vs baseline
             </div>
           </div>
 
@@ -302,7 +296,7 @@ const DemandForecast = () => {
               <p className={`text-2xl md:text-3xl font-bold font-display ${scenarioRisk === 'Critical' ? 'text-destructive' : scenarioRisk === 'Medium' ? 'text-warning' : 'text-success'}`}>
                 {scenarioRisk}
               </p>
-              <p className="text-[11px] text-muted-foreground mt-2 font-medium">Scenario dictates ~{avgScenarioWoc.toFixed(1)}W of forward cover</p>
+              <p className="text-[11px] text-muted-foreground mt-2 font-medium">Forward cover: {avgScenarioWoc.toFixed(1)} weeks</p>
             </div>
           </div>
         </div>
@@ -341,10 +335,6 @@ const DemandForecast = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 20 }}>
                     <defs>
-                      <linearGradient id="colorAdjusted" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.25} />
-                        <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0.02} />
-                      </linearGradient>
                       <linearGradient id="colorHistorical" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
                         <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.0} />
@@ -370,9 +360,6 @@ const DemandForecast = () => {
                     {/* Baseline Engine (Dashed) */}
                     <Line type="monotone" dataKey="baselineMid" stroke="hsl(var(--muted-foreground))" strokeWidth={2} strokeDasharray="5 5" dot={false} activeDot={false} opacity={0.6} />
 
-                    {/* Adjusted Scenario Range */}
-                    <Area type="monotone" dataKey="adjustedUpper" stroke="none" fill="url(#colorAdjusted)" fillOpacity={1} dot={false} legendType="none" />
-                    <Area type="monotone" dataKey="adjustedLower" stroke="none" fill="hsl(var(--card))" fillOpacity={1} dot={false} legendType="none" />
 
                     {/* Adjusted Scenario Target line */}
                     <Line type="monotone" dataKey="adjustedMid" stroke="hsl(var(--success))" strokeWidth={3}
@@ -419,8 +406,8 @@ const DemandForecast = () => {
                         const diff = f.predictedUnits - baseObj.predictedUnits;
                         return (
                           <tr key={f.weekKey} className="border-t border-border/20 hover:bg-muted/10 transition-colors">
-                            <td className="py-3 px-6 text-xs font-mono font-medium text-foreground">{f.weekKey}</td>
-                            <td className="py-3 px-6 text-center text-xs font-semibold text-muted-foreground border-l border-border/40 bg-muted/5">{baseObj.predictedUnits}u</td>
+                            <td className="py-3 px-6 text-xs font-bold text-foreground">{getWeekRange(f.weekKey)}</td>
+                            <td className="py-3 px-6 text-center text-xs font-bold text-muted-foreground border-l border-border/40 bg-muted/5">{baseObj.predictedUnits}u</td>
                             <td className="py-3 px-2 text-right text-xs font-medium text-muted-foreground border-l border-border/40">{f.lowerBound}</td>
                             <td className="py-3 px-2 text-center text-xs font-bold text-success">{f.predictedUnits}u</td>
                             <td className="py-3 px-2 text-left text-xs font-medium text-muted-foreground">{f.upperBound}</td>
@@ -474,7 +461,7 @@ const DemandForecast = () => {
                         </div>
                         <div>
                           <p className={`text-[12px] font-semibold ${active ? 'text-foreground' : 'text-muted-foreground'}`}>{mi.name}</p>
-                          <p className="text-[10px] text-muted-foreground font-body mt-0.5">{mi.type} · {mi.weekKey}</p>
+                          <p className="text-[10px] text-muted-foreground font-body mt-0.5">{mi.type} · {getWeekRange(mi.weekKey, mi.endWeekKey)}</p>
                         </div>
                       </div>
                       <div className={`flex flex-col items-end gap-0.5 text-[11px] font-bold ${active ? (impactPositive ? "text-success" : "text-destructive") : "text-muted-foreground/50"}`}>
