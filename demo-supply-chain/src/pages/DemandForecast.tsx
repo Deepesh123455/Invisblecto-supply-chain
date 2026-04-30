@@ -203,7 +203,7 @@ const DemandForecast = () => {
         {/* --- COMMAND CENTER HEADER --- */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card/40 border border-border/40 p-4 rounded-2xl shadow-sm backdrop-blur-md">
           <div className="flex flex-col">
-            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight">Demand Intelligence</h1>
+            <h1 className="text-2xl md:text-2xl font-display font-bold text-foreground tracking-tight">Demand Intelligence</h1>
             <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Scenario Command Center</p>
           </div>
         </div>

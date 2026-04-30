@@ -109,7 +109,7 @@ export function WorkforceActivity() {
         </div>
         <div className="text-right p-3 rounded-xl bg-primary/5 border border-primary/10">
           <p className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none mb-1">Total SKUs</p>
-          <p className="text-2xl font-bold text-primary leading-none">2,450</p>
+          <p className="text-2xl font-bold text-primary leading-none">250</p>
         </div>
       </div>
 
@@ -232,10 +232,9 @@ export function WorkforceActivity() {
                 <div className="relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors cursor-pointer group pb-2">
                   <div className="flex items-center justify-between">
                     <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{event.name}</h4>
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
-                      event.priority === "Critical" ? "status-critical" :
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${event.priority === "Critical" ? "status-critical" :
                       event.priority === "High" ? "status-high" : "status-medium"
-                    }`}>
+                      }`}>
                       {event.spike} Spike
                     </span>
                   </div>

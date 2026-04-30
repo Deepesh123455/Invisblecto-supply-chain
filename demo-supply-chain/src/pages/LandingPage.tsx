@@ -3,7 +3,8 @@ import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight, LayoutDashboard, TrendingUp, Warehouse, Network,
-  Sparkles, ShieldCheck, Zap, BarChart3
+  Sparkles, ShieldCheck, Zap,
+  AlertTriangle
 } from "lucide-react";
 
 const FEATURES = [
@@ -30,16 +31,16 @@ const FEATURES = [
     title: "Supply Operations",
     tagline: "Every SKU. Every shelf. Optimised.",
     description:
-      "Identify dead stock, flag stockout risks, and auto-trigger replenishment across all zones. Built for multi-store, multi-SKU apparel operations.",
+      "Identify dead stock, flag stockout risks, and auto-trigger replenishment across all zones. Built for multi-store, multi-SKU operations.",
     image: "/ss3.png",
     imageAlt: "Supply operations screenshot",
   },
   {
     icon: Network,
     title: "Store Network",
-    tagline: "Hundreds of stores. One view.",
+    tagline: "Multiples stores. Single Source Of Truth.",
     description:
-      "Pan-India store performance, inter-store transfer recommendations, and zone-level health scoring — so you always know which stores need attention first.",
+      "Store performance, inter-store transfer recommendations, and zone-level health scoring — so you always know which stores need attention first.",
     image: "/ss4.png",
     imageAlt: "Store network screenshot",
   },
@@ -112,14 +113,20 @@ const LandingPage = () => {
       <section className="px-6 md:px-12 pt-20 pb-16 text-center max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
 
-          <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground tracking-tight leading-tight mb-5">
-            Stop guessing.<br />
+          <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground tracking-tight leading-tight mb-4">
+            Predict Demand.<br />
             <span className="ai-gradient bg-clip-text" style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              Start knowing.
+              Optimize Supply.
             </span>
           </h1>
+
+          <div className="mb-8">
+            <span className="ai-gradient bg-clip-text text-sm md:text-base font-bold uppercase tracking-[0.3em]" style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              Stay Ahead Of Every Spike
+            </span>
+          </div>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
-            DemandIQ is the AI operations layer built for Indian apparel retail — turning your sales, inventory, and store data into decisions you can act on today.
+            DemandIQ is the AI operations layer built for Businesses — turning your sales, inventory, and store data into decisions you can act on today.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
@@ -139,26 +146,7 @@ const LandingPage = () => {
       </section>
 
       {/* ── Stats Strip ── */}
-      <section className="px-6 md:px-12 pb-16">
-        <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
-          {STATS.map((s, i) => (
-            <motion.div
-              key={s.label}
-              custom={i}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="rounded-2xl bg-card border border-border p-5 text-center card-shadow"
-            >
-              <p className="text-2xl md:text-3xl font-bold text-primary font-display">
-                <CountUp end={s.end} decimals={s.decimals} suffix={s.suffix} format={s.format} />
-              </p>
-              <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-bold mt-1">{s.label}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+
 
       {/* ── Feature Sections ── */}
       <section className="px-6 md:px-12 pb-20 max-w-6xl mx-auto space-y-24">
@@ -177,14 +165,7 @@ const LandingPage = () => {
             >
               {/* Text — alternating side */}
               <div className={!isEven ? "lg:order-2" : ""}>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Icon className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-                    0{i + 1} — {feature.icon.displayName ?? "Feature"}
-                  </span>
-                </div>
+
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight mb-2">
                   {feature.title}
                 </h2>
@@ -218,14 +199,15 @@ const LandingPage = () => {
       {/* ── Trust / Pillars ── */}
       <section className="px-6 md:px-12 py-16 bg-card border-y border-border">
         <div className="max-w-4xl mx-auto text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">Built for Indian retail. From day one.</h2>
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">Built . From day one.</h2>
           <p className="text-sm text-muted-foreground">No generic dashboards. Purpose-built for multi-store, multi-SKU apparel operations.</p>
         </div>
-        <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { icon: Sparkles, title: "AI-First Architecture", body: "Every number you see is driven by a live forecasting engine — not static reports." },
             { icon: ShieldCheck, title: "Reconciliation Built-In", body: "Stock discrepancies, stockout recovery, and lost-sales healing are automatic." },
-            { icon: Zap, title: "Scenario Modeling", body: "Toggle seasonal events and see demand impact across your entire store network instantly." },
+            { icon: Zap, title: "Agentic Scenario Modeling", body: "Toggle seasonal events and see demand impact across your entire store network instantly." },
+            { icon: AlertTriangle, title: "Real-Time Alerts", body: "Stockouts, slow-moving inventory, and forecast deviations — flagged before they impact revenue." }
           ].map((p, i) => (
             <motion.div
               key={p.title}
@@ -234,12 +216,12 @@ const LandingPage = () => {
               whileInView="show"
               viewport={{ once: true }}
               variants={fadeUp}
-              className="rounded-2xl bg-background border border-border p-6 card-shadow"
+              className="rounded-2xl bg-background border border-border p-6 card-shadow hover:shadow-lg hover:border-primary/30 transition-all duration-300 group"
             >
-              <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                 <p.icon className="h-5 w-5 text-primary" />
               </div>
-              <h3 className="text-sm font-bold text-foreground mb-1.5">{p.title}</h3>
+              <h3 className="text-sm font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{p.title}</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">{p.body}</p>
             </motion.div>
           ))}
@@ -256,15 +238,12 @@ const LandingPage = () => {
           className="max-w-2xl mx-auto"
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <BarChart3 className="h-5 w-5 text-primary" />
             <span className="text-sm font-bold text-primary">Ready to see your data differently?</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-            Your supply chain,<br />finally intelligent.
+            Your supply chain, now intelligent.
           </h2>
-          <p className="text-sm text-muted-foreground mb-8">
-            Join operations teams using DemandIQ to cut stockouts, reduce dead stock, and forecast with confidence.
-          </p>
+
           <button
             onClick={() => navigate("/login")}
             className="h-13 px-10 py-3.5 rounded-xl ai-gradient text-primary-foreground font-bold text-sm inline-flex items-center gap-2 hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg shadow-primary/20"
