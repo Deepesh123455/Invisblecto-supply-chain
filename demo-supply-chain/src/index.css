@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
 
 @layer base {
   :root {
@@ -199,4 +200,15 @@
 
 .animate-fade-up {
   animation: fade-up 0.4s ease-out forwards;
+}
+
+/* Leaflet Map Styling */
+.map-tiles-grayscale {
+  filter: grayscale(100%) invert(5%) contrast(105%);
+}
+
+.custom-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

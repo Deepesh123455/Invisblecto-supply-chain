@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, TrendingUp, Warehouse, Sparkles, Activity, Network, ArrowRightLeft
+  LayoutDashboard, TrendingUp, Warehouse, Sparkles, Activity, Network, ArrowRightLeft, History
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -21,7 +21,7 @@ const mainItems = [
   { title: "Demand Intelligence", url: "/demand-forecast", icon: TrendingUp },
   { title: "Supply Operations", url: "/inventory-allocation", icon: Warehouse },
   { title: "Store Network", url: "/store-network", icon: Network },
-
+  { title: "Order History", url: "/order-history", icon: History },
 ];
 
 export function AppSidebar() {

@@ -12,6 +12,7 @@ import InventoryAllocation from "@/pages/InventoryAllocation";
 import StoreNetwork from "@/pages/StoreNetwork";
 import InterStoreTransfers from "./pages/InterStoreTransfers";
 import SettingsPage from "@/pages/Settings";
+import OrderHistory from "@/pages/OrderHistory";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
           {/* <Route path="/exceptions" element={<ExceptionsDashboard />} /> */}
           <Route path="/store-network" element={<StoreNetwork />} />
           <Route path="/inter-store-transfers" element={<InterStoreTransfers />} />
+          <Route path="/orderHistory" element={<OrderHistory />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

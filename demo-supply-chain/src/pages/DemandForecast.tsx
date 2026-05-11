@@ -35,7 +35,34 @@ const getWeekRange = (weekKey: string, endWeekKey?: string) => {
   return `${startDate.toLocaleDateString('en-IN', options)} - ${endDate.toLocaleDateString('en-IN', options)}`;
 };
 
-const CustomForecastTooltip = ({ active, payload, label }: any) => {
+interface ChartDataPoint {
+  week: string;
+  type: "historical" | "forecast";
+  actual?: number;
+  cleaned?: number;
+  isHealed?: boolean;
+  event?: string;
+  baselinePredicted?: number;
+  baselineMid?: number;
+  adjustedLower?: number;
+  adjustedUpper?: number;
+  adjustedMid?: number;
+  confidence?: number;
+  price?: number;
+}
+
+interface ForecastTooltipProps {
+  active?: boolean;
+  payload?: {
+    payload: ChartDataPoint;
+    name: string;
+    value: number;
+    color: string;
+  }[];
+  label?: string;
+}
+
+const CustomForecastTooltip = ({ active, payload, label }: ForecastTooltipProps) => {
   if (!active || !payload?.length) return null;
   const d = payload[0]?.payload;
   return (

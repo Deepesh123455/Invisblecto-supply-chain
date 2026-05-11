@@ -112,11 +112,17 @@ const InventoryAllocation = () => {
     if (fairShareOpportunities.length > 0 && !selectedPushSkuId) {
       setSelectedPushSkuId(fairShareOpportunities[0].id);
     }
-  }, [fairShareOpportunities]);
+  }, [fairShareOpportunities, selectedPushSkuId]);
 
   const markdownItems = useMemo(() => {
     // Generate deterministic aging inventory mock data
-    const items: any[] = [];
+    interface MarkdownItem {
+      skuId: string;
+      storeId: string;
+      woc: number;
+      discountRange: [number, number];
+    }
+    const items: MarkdownItem[] = [];
     const seasonalSkus = simulator.skus.slice(2, 6);
     seasonalSkus.forEach((sku, idx) => {
       const store = filteredStores[idx * 4] || filteredStores[0];
@@ -198,7 +204,7 @@ const InventoryAllocation = () => {
           ].map(kpi => (
             <button
               key={kpi.id}
-              onClick={() => setActiveView(kpi.id as any)}
+              onClick={() => setActiveView(kpi.id as "replenishment" | "push" | "markdowns" | "dispatch")}
               className={`text-left rounded-xl border p-3 transition-all hover:shadow-md ${activeView === kpi.id
                 ? "bg-card border-primary shadow-sm ring-1 ring-primary/20"
                 : "bg-card border-border/40 hover:border-primary/40"

@@ -28,7 +28,7 @@ export interface Store {
 export interface SKU {
   id: string;
   name: string;
-  category: "Basic" | "Seasonal Fashion" | "Core Essentials" | "New Launch";
+  category: "Basic" | "Seasonal Fashion" | "Core Essentials" | "New Launch" | "Heritage Bazaar";
   leadTimeWeeks: number;
   sizeCurve: Record<string, number>;
   safetyBuffer: number;
@@ -116,6 +116,47 @@ export interface DispatchItem {
 // DATA SIMULATOR — 65 real stores
 // -------------------------------------------------------------------------
 
+export const CITY_COORDINATES: Record<string, [number, number]> = {
+  "New Delhi": [77.2090, 28.6139],
+  "Gurugram": [77.0266, 28.4595],
+  "Noida": [77.3910, 28.5355],
+  "Chandigarh": [76.7794, 30.7333],
+  "Jaipur": [75.7873, 26.9124],
+  "Lucknow": [80.9462, 26.8467],
+  "Agra": [78.0081, 27.1767],
+  "Varanasi": [82.9739, 25.3176],
+  "Amritsar": [74.8723, 31.6340],
+  "Dehradun": [78.0322, 30.3165],
+  "Faridabad": [77.3178, 28.4089],
+  "Ghaziabad": [77.4538, 28.6692],
+  "Bengaluru": [77.5946, 12.9716],
+  "Hyderabad": [78.4867, 17.3850],
+  "Chennai": [80.2707, 13.0827],
+  "Kochi": [76.2673, 9.9312],
+  "Coimbatore": [76.9558, 11.0168],
+  "Mysuru": [76.6394, 12.2958],
+  "Visakhapatnam": [83.2185, 17.6868],
+  "Thiruvananthapuram": [76.9366, 8.5241],
+  "Madurai": [78.1198, 9.9252],
+  "Mangaluru": [74.8560, 12.9141],
+  "Mumbai": [72.8777, 19.0760],
+  "Pune": [73.8567, 18.5204],
+  "Ahmedabad": [72.5714, 23.0225],
+  "Surat": [72.8311, 21.1702],
+  "Vadodara": [73.1812, 22.3072],
+  "Nashik": [73.7898, 19.9975],
+  "Rajkot": [70.8022, 22.3039],
+  "Nagpur": [79.0882, 21.1458],
+  "Thane": [72.9781, 19.2183],
+  "Goa": [74.1240, 15.2993],
+  "Kolkata": [88.3639, 22.5726],
+  "Bhubaneswar": [85.8245, 20.2961],
+  "Patna": [85.1376, 25.5941],
+  "Raipur": [81.6296, 21.2514],
+  "Ranchi": [85.3094, 23.3441],
+  "Guwahati": [91.7362, 26.1445],
+};
+
 const INDIAN_CITIES: { city: string; region: Region; segment: StoreSegment }[] = [
   // North India
   { city: "New Delhi", region: "North India", segment: "Tier 1 Metro" },
@@ -168,7 +209,7 @@ const SKU_CATALOG: Omit<SKU, 'id'>[] = [
   { name: "Silk Printed Saree", category: "Seasonal Fashion", leadTimeWeeks: 5, sizeCurve: { "Free Size": 1.0 }, safetyBuffer: 1.25, avgSellingPrice: 8500, seasonEnd: 40 },
   { name: "Polo T-Shirt", category: "Basic", leadTimeWeeks: 2, sizeCurve: { S: 0.12, M: 0.28, L: 0.30, XL: 0.20, XXL: 0.10 }, safetyBuffer: 1.10, avgSellingPrice: 950, seasonEnd: 52 },
   { name: "Summer Maxi Dress", category: "Seasonal Fashion", leadTimeWeeks: 4, sizeCurve: { XS: 0.08, S: 0.22, M: 0.32, L: 0.25, XL: 0.13 }, safetyBuffer: 1.20, avgSellingPrice: 3800, seasonEnd: 32 },
-  { name: "Bandhani Dupatta", category: "Heritage Bazaar" as any, leadTimeWeeks: 3, sizeCurve: { "Free Size": 1.0 }, safetyBuffer: 1.15, avgSellingPrice: 1200, seasonEnd: 44 },
+  { name: "Bandhani Dupatta", category: "Heritage Bazaar", leadTimeWeeks: 3, sizeCurve: { "Free Size": 1.0 }, safetyBuffer: 1.15, avgSellingPrice: 1200, seasonEnd: 44 },
   { name: "Tech Fleece Jogger", category: "Core Essentials", leadTimeWeeks: 3, sizeCurve: { S: 0.10, M: 0.28, L: 0.30, XL: 0.22, XXL: 0.10 }, safetyBuffer: 1.15, avgSellingPrice: 2800, seasonEnd: 52 },
   { name: "Embroidered Kurta Set", category: "Seasonal Fashion", leadTimeWeeks: 6, sizeCurve: { XS: 0.05, S: 0.18, M: 0.30, L: 0.28, XL: 0.19 }, safetyBuffer: 1.30, avgSellingPrice: 5500, seasonEnd: 44 },
   { name: "Summer Silk Blend (New)", category: "New Launch", leadTimeWeeks: 5, sizeCurve: { S: 0.20, M: 0.35, L: 0.30, XL: 0.15 }, safetyBuffer: 1.40, avgSellingPrice: 4200, seasonEnd: 36 },
@@ -181,13 +222,31 @@ const SKU_CATALOG: Omit<SKU, 'id'>[] = [
 
 const EVENTS = ["Diwali Peak", "Monsoon Sale", "Eid Collection", "New Year Rush", "Republic Day Sale", "Holi Special", "Wedding Season", "Summer Clearance", "Stock-out Event", "Competitor Discount", "Cricket Final"];
 
+export interface TransferOpportunity {
+  id: string;
+  skuName: string;
+  skuCategory: string;
+  skuId: string;
+  priority: "Critical" | "High" | "Medium" | "Low";
+  fromCity: string;
+  toCity: string;
+  fromRegion: Region;
+  toRegion: Region;
+  units: [number, number];
+  costSaving: number;
+  unitCost: number;
+  potentialRevenueSaved: number;
+  distance: number;
+  leadTimeDays: number;
+}
+
 export class DataSimulator {
   static instance: DataSimulator;
   stores: Store[] = [];
   skus: SKU[] = [];
   history: WeeklyData[] = [];
   manualInputs: ManualInput[] = [];
-  demoTransfers: any[] = [];
+  demoTransfers: TransferOpportunity[] = [];
 
   constructor() {
     if (DataSimulator.instance) {
@@ -239,7 +298,7 @@ export class DataSimulator {
   }
 
   private generateStores(count: number) {
-    let idx = 0;
+
     // Fill from city list, cycling through
     for (let i = 0; i < count; i++) {
       const cityData = INDIAN_CITIES[i % INDIAN_CITIES.length];
@@ -363,6 +422,11 @@ const MODEL_CONFIG: Record<SKU['category'], { name: string; reason: string; widt
     name: "Analogue SKU Mapping",
     reason: "No prior history — forecasting based on closest analogous SKU from last season.",
     widthFactor: 0.28,
+  },
+  "Heritage Bazaar": {
+    name: "Ensemble-Seasonal Hybrid",
+    reason: "Traditional/Cultural patterns detected — combination of seasonal peaks and baseline heritage demand.",
+    widthFactor: 0.15,
   },
 };
 
@@ -592,7 +656,7 @@ export class SupplyChainEngine {
    * Segment stores into monthly groups for model assignment
    */
   static segmentStores(stores: Store[], history: WeeklyData[]): StoreGroup[] {
-    const groups: Record<StoreSegment, StoreGroup> = {} as any;
+    const groups: Record<StoreSegment, StoreGroup> = {} as unknown as Record<StoreSegment, StoreGroup>;
 
     stores.forEach(store => {
       if (!groups[store.segment]) {
